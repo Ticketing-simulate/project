@@ -2,6 +2,7 @@ package org.example.ticketingdemo.domain.seat.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.seat.dto.request.SeatBuyRequest;
 import org.example.ticketingdemo.domain.seat.dto.response.SeatBuyResponse;
 
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SeatInternalService {
     private final SeatRepository seatRepository;
     private final UserRepository userRepository;
-    // private final ConcertRepository concertRepository;
+    private final ConcertRepository concertRepository;
 
     @Transactional // Buy
     public SeatBuyResponse buySeat(SeatBuyRequest seatBuyRequest, Long userId, Long concertId) {
