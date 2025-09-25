@@ -10,12 +10,15 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
@@ -32,12 +35,15 @@ public class JwtProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String subject) {
+    public String createToken(String subject, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(subject);
+        claims.put("roles", roles);
+
         Date now = new Date(); // 현재 시간
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);// 만료 시간 계산
 
         return Jwts.builder()
-                .setSubject(subject) // 토큰 소유자
+                .setClaims(claims)  // 토큰 소유자
                 .setIssuedAt(now) // 발급 시간
                 .setExpiration(expiryDate) // 만료 시간
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512) // 서명
@@ -46,12 +52,19 @@ public class JwtProvider {
 
     // 토큰에서 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
-        String username = getClaims(token).getSubject();  // 토큰에서 username 추출
+        Claims claims = getClaims(token);
+        String username = claims.getSubject();
+
+        //토큰에서 권한 정보(roles) 추출
+        List<String> roles = (List<String>) claims.get("roles");
+        List<SimpleGrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
 
         // User 객체 생성
-        User principal = new User(username, "", new ArrayList<>()); // User 객체 생성, 권한은 빈 리스트
-        return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities()); // 인증 객체 반환
+        User principal = new User(username, "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());// 인증 객체 반환
     }
 
 

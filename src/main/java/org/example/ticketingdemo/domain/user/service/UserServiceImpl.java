@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.example.ticketingdemo.domain.auth.jwt.JwtProvider;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
+
         User user = new User(dto.getUserName(), dto.getEmail(), encodedPassword);
         userRepository.save(user);
 
@@ -64,7 +66,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // 3. JWT 생성 (일관되게 userId를 subject로)
-        return jwtProvider.createToken(String.valueOf(user.getId()));
+        List<String> roles = Collections.singletonList(user.getRole());
+        return jwtProvider.createToken(String.valueOf(user.getId()), roles);
     }
 
 

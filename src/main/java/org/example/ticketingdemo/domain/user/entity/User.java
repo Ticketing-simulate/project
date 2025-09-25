@@ -27,12 +27,15 @@ public class User extends BaseEntity {
 
     private String password;
 
+    private String role;
+
 
     // 일반 생성자
     public User(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
         this.password = password;
+        this.role = "ADMIN";
     }
 
     // 사용자 정보 업데이트
@@ -40,5 +43,10 @@ public class User extends BaseEntity {
         this.userName = userName;
         this.email = email;
         this.password = password;
+    }
+
+    // Role 업데이트
+    public void setRole(String role) {
+        this.role = role;
     }
 }
