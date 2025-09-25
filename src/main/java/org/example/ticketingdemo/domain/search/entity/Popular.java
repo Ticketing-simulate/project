@@ -12,12 +12,19 @@ import lombok.NoArgsConstructor;
 @Table(name = "popular")
 public class Popular {
 
+    /*
+    Id - PK로 설정하기
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Id
     private Long concertId;
 
+    /*
+    티켓수 - 티켓 사는 개수 (콘서트)
+     */
     private Integer ticketcounts;
 
     @Builder
