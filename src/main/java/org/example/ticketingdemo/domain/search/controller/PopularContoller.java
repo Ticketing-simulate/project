@@ -8,6 +8,7 @@ import org.example.ticketingdemo.domain.search.service.PopularService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -51,12 +52,20 @@ public class PopularContoller {
 //    }
 
 
+    /*
+    페이징 처리
+    query를 통해서 검색을 합니다 콘서트관련된것
+     */
      @GetMapping("/search/concert")
      public ResponseEntity<Page<ConcertsSearchDto>> getConcerts(
             @RequestParam(required = false) int page,
             @RequestParam(required = false) int size,
             @RequestParam String query
      ) {
+         if(ObjectUtils.isEmpty(query)) {
+            throw new IllegalArgumentException("query is empty");
+         }
+
          return ResponseEntity.ok(popularService.serchConcert(page, size, query));
      }
 

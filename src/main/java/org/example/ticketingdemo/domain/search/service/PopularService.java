@@ -33,6 +33,9 @@ import static java.lang.Long.parseLong;
 public class PopularService {
 
     private final SearchRepository searchRepository;
+    //RedisTemplate -> ZSet, Set, HashSet... 사용할때 적절함
+    //readisTemplate는 주로 opsFor... 사용함
+    //redisTemplate만들기 위해 주입이 필요함
     private final RedisTemplate<String, String> redisTemplate;
     //private final ConcertService concertService;
     private final ConcertRepository concertRepository;
@@ -54,7 +57,12 @@ public class PopularService {
        return searchRepository.save(savedPopular);
     }
 
-    //Top 5 랭크 인기 콘서트 출력하기
+    /*
+    Top 5 랭크 인기 콘서트 출력하기 (redisTemplate 활용)
+    랭크는 Set형태 -> opsFor중에서 -> ZSet사용
+    increment() 증가값
+    reverseRange() -> rank, 처음, 끝 -> 랭크를 출력합니다
+    */
     public Map<String, Long> getRanks() {
         redisTemplate.opsForZSet().incrementScore(Rank, "concert:rank", 0);
         Set<String> resultRanks = redisTemplate.opsForZSet().reverseRange(Rank, 0, 4);
