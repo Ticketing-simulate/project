@@ -3,6 +3,7 @@ package org.example.ticketingdemo.domain.auth.config;
 import org.example.ticketingdemo.domain.auth.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,7 +41,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())  // 기본 로그인 폼 비활성화
                 .httpBasic(basic -> basic.disable()) // HTTP Basic 인증 비활성화
                 .authorizeHttpRequests(auth -> auth // 요청 권한 설정
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll() // 회원가입/로그인 허용
+                        .requestMatchers("/user/register", "/api/auth/login").permitAll() // 회원가입/로그인 허용
                         .anyRequest().authenticated() // 나머지 요청 인증 필요
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
