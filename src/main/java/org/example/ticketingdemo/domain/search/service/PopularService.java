@@ -8,10 +8,19 @@ import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
 import org.example.ticketingdemo.domain.search.dto.SearchResponseDto;
 import org.example.ticketingdemo.domain.search.entity.Popular;
 import org.example.ticketingdemo.domain.search.repository.SearchRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.print.DocFlavor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +34,8 @@ public class PopularService {
 
     private final SearchRepository searchRepository;
     private final RedisTemplate<String, String> redisTemplate;
-    private final ConcertService concertService;
+    //private final ConcertService concertService;
+    private final ConcertRepository concertRepository;
 
     //rank설정
     private static String Rank = "concnert:rank";
@@ -69,5 +79,10 @@ public class PopularService {
 //                .concerts(concerts)
 //                .build();
 //    }
+
+    public Page<ConcertsSearchDto> serchConcert(int page, int size, String query) {
+          Pageable pageable = PageRequest.of(page -1, size);
+         return concertRepository.searchs(pageable, query);
+    }
 
 }

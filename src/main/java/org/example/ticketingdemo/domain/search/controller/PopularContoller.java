@@ -1,9 +1,11 @@
 package org.example.ticketingdemo.domain.search.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
 import org.example.ticketingdemo.domain.search.dto.SearchResponseDto;
 import org.example.ticketingdemo.domain.search.entity.Popular;
 import org.example.ticketingdemo.domain.search.service.PopularService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +51,13 @@ public class PopularContoller {
 //    }
 
 
-
+     @GetMapping("/search/concert")
+     public ResponseEntity<Page<ConcertsSearchDto>> getConcerts(
+            @RequestParam(required = false) int page,
+            @RequestParam(required = false) int size,
+            @RequestParam String query
+     ) {
+         return ResponseEntity.ok(popularService.serchConcert(page, size, query));
+     }
 
 }
