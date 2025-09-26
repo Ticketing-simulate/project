@@ -19,7 +19,7 @@ public class SeatExternalService  {
     }
 
     @Transactional
-    public Seat getCommentById(Long seatId) {
+    public Seat getSeatById(Long seatId) {
         return seatRepository.findById(seatId).orElseThrow(()-> new InvaildSeatException(SeatErrorCode.SEAT_NOT_FOUND_SEAT));
     }
 }

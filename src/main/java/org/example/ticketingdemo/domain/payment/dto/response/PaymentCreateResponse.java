@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record PaymentCreateResponse (
     Long id,
     Long userId,
-    Long totalPrice,
+    Double totalPrice,
     LocalDateTime createAt
 ) {
     public static PaymentCreateResponse fromPayment(Payment payment){

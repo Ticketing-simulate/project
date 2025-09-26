@@ -49,11 +49,11 @@ public class Seat extends BaseEntity {
         this.user = user;
     }
 
-    public void cancelBy(User user) {
-        if (this.status != SeatStatus.SOLD) { // 해당 시트가 판매된 시트가 아닐 떄
-            throw new InvaildSeatException(SeatErrorCode.SEAT_NOT_SOLD);
+    public void cancelPending(User user) {
+        if (this.status != SeatStatus.PENDING) {
+            throw new InvaildSeatException(SeatErrorCode.SEAT_NOT_PENDING);
         }
-        if (!this.user.getId().equals(user.getId())) { // 유저가 일치하지 않을 떄
+        if (!this.user.getId().equals(user.getId())) {
             throw new InvaildSeatException(SeatErrorCode.SEAT_NOT_MATCH_USER);
         }
         this.user = null;

@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 @Builder
 public record PaymentListResponse(
         Long id,
-        String title,
-        Long totalPrice,
+        String concertTitle,
+        Double totalPrice,
         LocalDateTime createAt
 ) {
     public static PaymentListResponse fromPayment(Payment payment){
         return PaymentListResponse.builder()
                 .id(payment.getId())
-                .title(payment.getTicket().getConcertName())
+                .concertTitle(payment.getSeat().getConcert().getTitle())
                 .totalPrice(payment.getTotalPrice())
                 .createAt(payment.getCreatedAt())
                 .build();
