@@ -2,18 +2,20 @@ spring:
   application:
     name: ticketing-demo
   datasource:
-    url: jdbc:mysql://localhost:3306/${DB_NAME}
-    username: ${DB_USER}
-    password: ${DB_USER_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres
+
+
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      driver-class-name: org.postgresql.Driver
 
   jpa:
       hibernate:
-        ddl-auto: create
+        ddl-auto: update
       properties:
         hibernate:
-          show_sql: true
-          format_sql: true
+          hibernate:
+            dialect: org.hibernate.dialect.PostgreSQLDialect
 
 jwt:
   secret:
