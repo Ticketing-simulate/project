@@ -25,25 +25,30 @@ public class SeatInternalService {
     private final SeatRepository seatRepository;
     private final UserRepository userRepository;
 
-    @Transactional // 좌석 구매
+    @Transactional // 좌석 구매 요청 (결제 대기)
     public SeatBuyResponse buySeat(SeatBuyRequest seatBuyRequest, Long userId, Long concertId) {
         // 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new InvaildSeatException(SeatErrorCode.SEAT_NOT_FOUND_USER_ID));
 
+        // 좌석 조회
         Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatBuyRequest.seatNumber())
                 .orElseThrow(() -> new InvaildSeatException(SeatErrorCode.SEAT_NOT_FOUND_SEAT));
 
-        // 이미 팛린 좌석인지 확인
-        if(seat.getStatus() == SeatStatus.SOLD) {
+        // 이미 SOLD or PENDING 좌석이면 구매 불가
+        if (seat.getStatus() == SeatStatus.SOLD) {
             throw new InvaildSeatException(SeatErrorCode.SEAT_ALREADY_SOLD);
         }
-        seat.assignUser(user); // 유저와 연결
-        seat.changeStatus(SeatStatus.SOLD); // 구매 되어 seat 상태 sold 변경
+        if (seat.getStatus() == SeatStatus.PENDING) {
+            throw new InvaildSeatException(SeatErrorCode.SEAT_ALREADY_PENDING);
+        }
+        // 좌석을 구매 대기 상태로 전환
+        seat.assignUser(user);
+        seat.changeStatus(SeatStatus.PENDING);
         return SeatBuyResponse.from(seat, SeatUserResponse.from(seat), SeatConcertResponse.from(seat));
     }
 
-    @Transactional // 좌석 구매 취소
+    @Transactional // 좌석 구매 취소(시간 초과 및 PENDING 상태인 SEAT를 취소한 경우
     public SeatCancelResponse cancelSeat(SeatCancelRequest seatCancelRequest, Long userId, Long concertId) {
         // 유저 조회
         User user = userRepository.findById(userId)
@@ -53,7 +58,7 @@ public class SeatInternalService {
         Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatCancelRequest.seatNumber())
                 .orElseThrow(() -> new InvaildSeatException(SeatErrorCode.SEAT_NOT_FOUND_SEAT));
 
-        seat.cancelBy(user);
+        seat.cancelPending(user);
 
         return SeatCancelResponse.from(seat, SeatConcertResponse.from(seat));
     }
