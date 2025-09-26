@@ -8,6 +8,8 @@ import org.example.ticketingdemo.domain.seat.dto.response.SeatBuyResponse;
 import org.example.ticketingdemo.domain.seat.dto.response.SeatCancelResponse;
 import org.example.ticketingdemo.domain.seat.service.SeatInternalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,10 +23,11 @@ public class SeatController {
     // 좌석 구매
     @PostMapping("/{concertId}/buy")
     public ResponseEntity<ApiResponse<SeatBuyResponse>> buySeat(
-            @RequestParam Long userId, // 수정 사항
+            @AuthenticationPrincipal User principal,
             @PathVariable Long concertId,
             @RequestBody SeatBuyRequest seatBuyRequest
     ) {
+        Long userId = Long.parseLong(principal.getUsername());
         SeatBuyResponse response = seatInternalService.buySeat(seatBuyRequest, userId, concertId);
         return ApiResponse.ok(response);
     }
@@ -32,10 +35,11 @@ public class SeatController {
     // 좌석 취소
     @PatchMapping("/{concertId}/cancel")
     public ResponseEntity<ApiResponse<SeatCancelResponse>> cancelSeat(
-            @RequestParam Long userId, // 수정 사항
+            @AuthenticationPrincipal User principal,
             @PathVariable Long concertId,
             @RequestBody SeatCancelRequest seatCancelRequest
     ) {
+        Long userId = Long.parseLong(principal.getUsername());
         SeatCancelResponse response = seatInternalService.cancelSeat(seatCancelRequest, userId, concertId);
         return ApiResponse.ok(response);
     }
