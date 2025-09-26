@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import org.example.ticketingdemo.common.entity.BaseEntity;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
-import org.example.ticketingdemo.domain.seat.exception.InvaildSeatException;
-import org.example.ticketingdemo.domain.seat.exception.SeatErrorCode;
 import org.example.ticketingdemo.domain.user.entity.User;
 
 
@@ -35,7 +33,8 @@ public class Seat extends BaseEntity {
     @Column(nullable = false)
     private String seatNumber;
 
-    private Seat(Concert concert, String seatNumber) {
+    private Seat(Concert concert, SeatStatus status, String seatNumber) {
+        this.user = user;
         this.concert = concert;
         this.status = SeatStatus.AVAILABLE; // concert에서 만들어질때(구매되기 전)
         this.seatNumber = seatNumber;
@@ -49,18 +48,7 @@ public class Seat extends BaseEntity {
         this.user = user;
     }
 
-    public void cancelPending(User user) {
-        if (this.status != SeatStatus.PENDING) {
-            throw new InvaildSeatException(SeatErrorCode.SEAT_NOT_PENDING);
-        }
-        if (!this.user.getId().equals(user.getId())) {
-            throw new InvaildSeatException(SeatErrorCode.SEAT_NOT_MATCH_USER);
-        }
-        this.user = null;
-        this.status = SeatStatus.AVAILABLE;
-    }
-
-    public static Seat create(Concert concert, String seatNumber) {
-        return new Seat(concert, seatNumber);
+    public static Seat create(Concert concert, SeatStatus status, String seatNumber) {
+        return new Seat(concert, status, seatNumber);
     }
 }

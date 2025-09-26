@@ -1,17 +1,11 @@
 package org.example.ticketingdemo.domain.seat.controller;
-
 import lombok.RequiredArgsConstructor;
 import org.example.ticketingdemo.common.dto.response.ApiResponse;
 import org.example.ticketingdemo.domain.seat.dto.request.SeatBuyRequest;
-import org.example.ticketingdemo.domain.seat.dto.request.SeatCancelRequest;
 import org.example.ticketingdemo.domain.seat.dto.response.SeatBuyResponse;
-import org.example.ticketingdemo.domain.seat.dto.response.SeatCancelResponse;
 import org.example.ticketingdemo.domain.seat.service.SeatInternalService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/seats")
@@ -20,37 +14,23 @@ public class SeatController {
 
     private final SeatInternalService seatInternalService;
 
-    // 좌석 구매
-    @PostMapping("/{concertId}/buy")
+    @PostMapping("/buy/{concertId}")
     public ResponseEntity<ApiResponse<SeatBuyResponse>> buySeat(
-            @AuthenticationPrincipal User principal,
             @PathVariable Long concertId,
+            @RequestParam Long userId, // 수정 사항
             @RequestBody SeatBuyRequest seatBuyRequest
     ) {
-        Long userId = Long.parseLong(principal.getUsername());
         SeatBuyResponse response = seatInternalService.buySeat(seatBuyRequest, userId, concertId);
         return ApiResponse.ok(response);
     }
 
-    // 좌석 취소
-    @PatchMapping("/{concertId}/cancel")
-    public ResponseEntity<ApiResponse<SeatCancelResponse>> cancelSeat(
-            @AuthenticationPrincipal User principal,
-            @PathVariable Long concertId,
-            @RequestBody SeatCancelRequest seatCancelRequest
+
+    @PostMapping("/cancel/{seatId}")
+    public ResponseEntity<ApiResponse<SeatBuyResponse>> cancelSeat(
+            @PathVariable Long seatId,
+            @RequestParam Long userId // 수정 사항
     ) {
-        Long userId = Long.parseLong(principal.getUsername());
-        SeatCancelResponse response = seatInternalService.cancelSeat(seatCancelRequest, userId, concertId);
+        SeatBuyResponse response = seatInternalService.cancelSeat(seatId, userId);
         return ApiResponse.ok(response);
     }
-
-    // 사용 가능한 좌석 조회
-    @GetMapping("/{concertId}/available")
-    public ResponseEntity<ApiResponse<List<String>>> getAvailableSeats(
-            @PathVariable Long concertId
-    ) {
-        List<String> seats = seatInternalService.getAvailableSeatNumbers(concertId);
-        return ApiResponse.ok(seats);
-    }
 }
-
