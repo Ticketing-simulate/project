@@ -11,7 +11,9 @@ import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateRespon
 import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
+import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
+import org.example.ticketingdemo.domain.seat.service.SeatExternalService;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,8 @@ public class PaymentServiceImpl implements PaymentService{
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final SeatRepository seatRepository;
+    //private final TicketRepository ticketRepository;
+    private final SeatExternalService ticketExternalService;
 
     @Override
     @Transactional
@@ -41,6 +45,11 @@ public class PaymentServiceImpl implements PaymentService{
         // 티켓 유효성 검증
         Seat seat = seatRepository.findById(request.seatId())
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND));
+
+        //PENDING 상태가 맞는지 확인 (결제는 PENDING된 좌석에 대해서만 가능)
+        if (seat.getStatus() != SeatStatus.PENDING) {
+            throw new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND);
+        }
 
         // 요청으로 받은 금액
         BigDecimal requestedPrice = BigDecimal.valueOf(request.totalPrice());
@@ -60,6 +69,8 @@ public class PaymentServiceImpl implements PaymentService{
                 .build();
         paymentRepository.save(payment);
 
+        // 3. 좌석 상태를 SOLD로 변경
+        seat.changeStatus(SeatStatus.SOLD);
         return PaymentCreateResponse.fromPayment(payment);
     }
 

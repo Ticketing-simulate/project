@@ -51,4 +51,5 @@ public class Concert {
     // 판매 가능 티켓 수
     @Column(nullable = false)
     private Integer ticket;
+
 }
