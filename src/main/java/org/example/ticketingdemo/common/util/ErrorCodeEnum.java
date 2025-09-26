@@ -14,7 +14,8 @@ public enum ErrorCodeEnum implements ErrorCode {
     USERNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 닉네임은 이미 사용중입니다."),
     USER_DELETED(HttpStatus.GONE, "해당 사용자는 존재하지 않습니다."),
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 좌석이 존재하지 않습니다."),
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 결제를 찾을 수 없습니다.");
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 결제를 찾을 수 없습니다."),
+    INVALID_PAYMENT_PRICE(HttpStatus.BAD_REQUEST, "클라이언트 요청 금액이 서버 정가와 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

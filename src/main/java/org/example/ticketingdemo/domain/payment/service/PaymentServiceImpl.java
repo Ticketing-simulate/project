@@ -9,15 +9,17 @@ import org.example.ticketingdemo.domain.payment.dto.response.PaymentFindResponse
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
 import org.example.ticketingdemo.domain.payment.entity.Payment;
-import org.example.ticketingdemo.domain.payment.temporary.TicketRepository;
-import org.example.ticketingdemo.domain.payment.temporary.Ticket;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
+import org.example.ticketingdemo.domain.seat.entity.Seat;
+import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class PaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
-    private final TicketRepository ticketRepository;
+    private final SeatRepository seatRepository;
 
     @Override
     @Transactional
@@ -37,16 +39,24 @@ public class PaymentServiceImpl implements PaymentService{
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.USER_NOT_FOUND));
 
         // 티켓 유효성 검증
-        Ticket ticket = ticketRepository.findById(request.seatId())
+        Seat seat = seatRepository.findById(request.seatId())
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND));
 
-        Long totalPrice = ticket.getPrice();
+        // 요청으로 받은 금액
+        BigDecimal requestedPrice = BigDecimal.valueOf(request.totalPrice());
+        // DB에서 조회한 금액
+        BigDecimal serverPrice = BigDecimal.valueOf(seat.getConcert().getPrice());
+
+        // 왼쪽값이 우측보다 클 경우 1, 같을 경우 0, 작을 경우 -1 반환
+        if (requestedPrice.compareTo(serverPrice) != 0){
+            throw new GlobalException(ErrorCodeEnum.INVALID_PAYMENT_PRICE);
+        }
 
         // 결제 정보 생성
         Payment payment = Payment.builder()
                 .user(user)
-                .ticket(ticket)
-                .totalPrice(ticket.getPrice())
+                .seat(seat)
+                .totalPrice(serverPrice.doubleValue())
                 .build();
         paymentRepository.save(payment);
 

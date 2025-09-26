@@ -9,16 +9,17 @@ import java.time.LocalDateTime;
 public record PaymentFindResponse (
     Long id,
     String username,
-    Long tickId,
     String concertTitle,
+    Long seatNumber,
+    Double totalPrice,
     LocalDateTime createAt
 ) {
     public static PaymentFindResponse fromPayment(Payment payment){
         return PaymentFindResponse.builder()
                 .id(payment.getId())
                 .username(payment.getUser().getUserName())
-                .tickId(payment.getTicket().getId())
-                .concertTitle(payment.getTicket().getConcertName())
+                .concertTitle(payment.getSeat().getConcert().getTitle())
+                .totalPrice(payment.getSeat().getConcert().getPrice())
                 .createAt(payment.getCreatedAt())
                 .build();
     }
