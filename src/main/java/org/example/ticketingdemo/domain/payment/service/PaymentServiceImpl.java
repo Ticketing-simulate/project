@@ -8,7 +8,7 @@ import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
 import org.example.ticketingdemo.domain.payment.entity.Payment;
-import org.example.ticketingdemo.domain.payment.temporary.TicketRepository;
+import org.example.ticketingdemo.domain.seat.supabase.SeatExternalService;
 import org.example.ticketingdemo.domain.payment.temporary.Ticket;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
 import org.example.ticketingdemo.domain.user.entity.User;
@@ -25,7 +25,8 @@ public class PaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
-    private final TicketRepository ticketRepository;
+    //private final TicketRepository ticketRepository;
+    private final SeatExternalService ticketExternalService;
 
     @Override
     @Transactional
@@ -36,7 +37,7 @@ public class PaymentServiceImpl implements PaymentService{
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.USER_NOT_FOUND));
 
         // 티켓 유효성 검증
-        Ticket ticket = ticketRepository.findById(request.getTicketId())
+        Ticket ticket = ticketExternalService.findTicketById(request.ticketId())
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.TICKET_NOT_FOUND));
 
         Long totalPrice = ticket.getPrice();
