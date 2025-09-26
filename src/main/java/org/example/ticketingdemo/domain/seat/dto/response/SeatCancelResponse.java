@@ -5,20 +5,18 @@ import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 
 import java.time.LocalDateTime;
 
-public record SeatBuyResponse(
+public record SeatCancelResponse(
         String seatNumber,
-        SeatUserResponse user,
         SeatConcertResponse concert,
         SeatStatus status,
         LocalDateTime updatedAt
 ) {
-    public static SeatBuyResponse from(
+    public static SeatCancelResponse from(
             Seat seat,
-            SeatUserResponse seatUserResponse,
-            SeatConcertResponse seatConcertResponse) {
-        return new SeatBuyResponse(
+            SeatConcertResponse seatConcertResponse
+    ) {
+        return new SeatCancelResponse(
                 seat.getSeatNumber(),
-                seatUserResponse,
                 seatConcertResponse,
                 seat.getStatus(),
                 seat.getUpdatedAt()
