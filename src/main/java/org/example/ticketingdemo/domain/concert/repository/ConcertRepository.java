@@ -18,5 +18,5 @@ import java.util.List;
 public interface ConcertRepository extends JpaRepository<Concert, Long> {
     Page<ConcertsSearchDto> searchs(Pageable pageable, String query);
 }
-}
+
 

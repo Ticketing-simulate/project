@@ -20,17 +20,16 @@ import java.util.stream.Collectors;
 @Service
 
 public interface ConcertService {
-//    private final ConcertRepository concertRepository;
+
 
     ConcertDTO createConcert(ConcertDTO concertDTO);
+
     ConcertDTO getConcertById(Long id);
+
     List<ConcertDTO> getAllConcerts();
+
     ConcertDTO updateConcert(Long id, ConcertDTO concertDTO);
+
     void deleteConcert(Long id);
 
-//    public default List<ConcertsSearchDto> ConcertSearch(String query, int limit) {
-//        List<Concert> concerts = concertRepository.findByTitleContaingIgnoreCase(query, PageRequest.of(0, limit));
-//
-//        return concerts.stream().map(ConcertsSearchDto::from).collect(Collectors.toList());
-//    }
 }
