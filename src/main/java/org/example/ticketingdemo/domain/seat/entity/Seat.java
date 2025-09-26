@@ -1,0 +1,54 @@
+package org.example.ticketingdemo.domain.seat.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.example.ticketingdemo.common.entity.BaseEntity;
+import org.example.ticketingdemo.domain.concert.entity.Concert;
+import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
+import org.example.ticketingdemo.domain.user.entity.User;
+
+
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "seat")
+public class Seat extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "concert_id", nullable = false)
+    private Concert concert;
+
+    @Enumerated(EnumType.STRING)
+    private SeatStatus status;
+
+    @Column(nullable = false)
+    private String seatNumber;
+
+    private Seat(Concert concert, SeatStatus status, String seatNumber) {
+        this.user = user;
+        this.concert = concert;
+        this.status = SeatStatus.AVAILABLE; // concert에서 만들어질때(구매되기 전)
+        this.seatNumber = seatNumber;
+    }
+
+    public void changeStatus(SeatStatus status){
+        this.status = status;
+    }
+
+    public void assignUser(User user) {
+        this.user = user;
+    }
+
+    public static Seat create(Concert concert, SeatStatus status, String seatNumber) {
+        return new Seat(concert, status, seatNumber);
+    }
+}
