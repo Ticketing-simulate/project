@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ticketingdemo.common.exception.GlobalException;
 import org.example.ticketingdemo.common.util.ErrorCodeEnum;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
+import org.example.ticketingdemo.domain.payment.dto.response.PaymentFindResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
 import org.example.ticketingdemo.domain.payment.entity.Payment;
@@ -31,13 +32,13 @@ public class PaymentServiceImpl implements PaymentService{
     @Transactional
     public PaymentCreateResponse createPayment(Long userId, PaymentCreateRequest request) {
 
-        // 1. 사용자 및 임시 티켓 유효성 검증
+        // 1. 사용자 검증
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.USER_NOT_FOUND));
 
         // 티켓 유효성 검증
-        Ticket ticket = ticketRepository.findById(request.getTicketId())
-                .orElseThrow(() -> new GlobalException(ErrorCodeEnum.TICKET_NOT_FOUND));
+        Ticket ticket = ticketRepository.findById(request.seatId())
+                .orElseThrow(() -> new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND));
 
         Long totalPrice = ticket.getPrice();
 
@@ -57,5 +58,15 @@ public class PaymentServiceImpl implements PaymentService{
 
         return paymentRepository.findByUserId(userId, pageable)
                 .map(PaymentListResponse::fromPayment);
+    }
+
+    @Override
+    public PaymentFindResponse find(Long userId, Long paymentId) {
+
+        Payment payment = paymentRepository.findByIdAndUserId(paymentId, userId)
+                .orElseThrow(() -> new GlobalException(ErrorCodeEnum.PAYMENT_NOT_FOUND));
+
+        return PaymentFindResponse.fromPayment(payment);
+
     }
 }
