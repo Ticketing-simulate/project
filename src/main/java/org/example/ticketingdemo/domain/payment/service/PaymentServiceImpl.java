@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ticketingdemo.common.exception.GlobalException;
 import org.example.ticketingdemo.common.util.ErrorCodeEnum;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
+import org.example.ticketingdemo.domain.payment.dto.response.PaymentCancelResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentFindResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
@@ -31,18 +32,17 @@ public class PaymentServiceImpl implements PaymentService{
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final SeatRepository seatRepository;
-    //private final TicketRepository ticketRepository;
     private final SeatExternalService ticketExternalService;
 
     @Override
     @Transactional
     public PaymentCreateResponse createPayment(Long userId, PaymentCreateRequest request) {
 
-        // 1. 사용자 검증
+        // 사용자 검증
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.USER_NOT_FOUND));
 
-        // 티켓 유효성 검증
+        // 좌석 유효성 검증
         Seat seat = seatRepository.findById(request.seatId())
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND));
 
@@ -89,5 +89,25 @@ public class PaymentServiceImpl implements PaymentService{
 
         return PaymentFindResponse.fromPayment(payment);
 
+    }
+
+    @Override
+    public PaymentCancelResponse delete(Long userId, Long paymentId) {
+
+        Payment payment = paymentRepository.findByIdAndUserId(paymentId, userId)
+                .orElseThrow(() -> new GlobalException(ErrorCodeEnum.PAYMENT_NOT_FOUND));
+
+        Seat seat = payment.getSeat();
+
+        // 좌석 상태가 SOLD인지 확인
+        if (seat.getStatus() != SeatStatus.SOLD) {
+            throw new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND);
+        }
+        // 좌석 상태를 AVAILABLE로 변경
+        seat.changeStatus(SeatStatus.AVAILABLE);
+        // 결제 삭제
+        paymentRepository.delete(payment);
+
+        return PaymentCancelResponse.fromPayment(payment);
     }
 }

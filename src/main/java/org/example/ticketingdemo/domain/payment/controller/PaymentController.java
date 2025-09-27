@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.ticketingdemo.common.dto.response.ApiPageResponse;
 import org.example.ticketingdemo.common.dto.response.ApiResponse;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
+import org.example.ticketingdemo.domain.payment.dto.response.PaymentCancelResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentFindResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
+import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.service.PaymentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +39,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payments")
-    public ResponseEntity<ApiPageResponse<PaymentListResponse>> findAll(
+    public ResponseEntity<ApiPageResponse<PaymentListResponse>> findAllPayments(
             @AuthenticationPrincipal User principal,
             @PageableDefault Pageable pageable
     ) {
@@ -58,5 +60,18 @@ public class PaymentController {
 
         return ApiResponse.ofSuccess("결제 내역 조회했습니다.", payments);
     }
+
+    @DeleteMapping("/payments/{paymentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<PaymentCancelResponse> cancelPayment(
+            @AuthenticationPrincipal User principal,
+            @PathVariable long paymentId
+    ){
+        Long userId = Long.parseLong(principal.getUsername());
+        PaymentCancelResponse payments = paymentService.delete(userId, paymentId);
+
+        return ApiResponse.ofSuccess("결제가 취소되었습니다.", payments);
+    }
+
 
 }
