@@ -13,6 +13,7 @@ import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
+import org.example.ticketingdemo.domain.seat.exception.SeatErrorCode;
 import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
 import org.example.ticketingdemo.domain.seat.service.SeatExternalService;
 import org.example.ticketingdemo.domain.user.entity.User;
@@ -42,9 +43,14 @@ public class PaymentServiceImpl implements PaymentService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.USER_NOT_FOUND));
 
-        // 좌석 유효성 검증
-        Seat seat = seatRepository.findById(request.seatId())
+        // 좌석 조회
+        Seat seat = seatRepository.findByConcertIdAndSeatNumber(request.concertId(), request.seatNumber())
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND));
+
+        // 좌석이 요청한 사용자에게 할당된 좌석인지 확인
+        if (!seat.getUser().getId().equals(userId)) {
+            throw  new GlobalException(SeatErrorCode.SEAT_NOT_MATCH_USER);
+        }
 
         //PENDING 상태가 맞는지 확인 (결제는 PENDING된 좌석에 대해서만 가능)
         if (seat.getStatus() != SeatStatus.PENDING) {
@@ -92,6 +98,7 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
+    @Transactional
     public PaymentCancelResponse delete(Long userId, Long paymentId) {
 
         Payment payment = paymentRepository.findByIdAndUserId(paymentId, userId)
@@ -105,8 +112,10 @@ public class PaymentServiceImpl implements PaymentService{
         }
         // 좌석 상태를 AVAILABLE로 변경
         seat.changeStatus(SeatStatus.AVAILABLE);
-        // 결제 삭제
-        paymentRepository.delete(payment);
+        // Soft delete 수행
+        payment.delete();
+        // Update 반영
+        paymentRepository.save(payment);
 
         return PaymentCancelResponse.fromPayment(payment);
     }
