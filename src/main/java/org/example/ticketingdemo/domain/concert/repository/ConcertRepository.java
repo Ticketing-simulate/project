@@ -16,6 +16,7 @@ import java.util.List;
 //JpaRepository를 상속받아 기본적인 데이터베이스 작업(CRUD) 메서드들을 자동으로 사용할 수 있음.
 // <Concert, Long> : 이 리포지토리가 'Concert' 엔티티를 다루고, 엔티티의 ID 타입이 'Long'임을 의미.
 public interface ConcertRepository extends JpaRepository<Concert, Long> {
-    Page<ConcertsSearchDto> searchs(Pageable pageable, String query);
+    @Query("select c FROM Concert c JOIN c.title WHERE c.title = :query")
+    Page<Concert> findByTitle(@Param("query") String query, Pageable pageable);
 }
 
