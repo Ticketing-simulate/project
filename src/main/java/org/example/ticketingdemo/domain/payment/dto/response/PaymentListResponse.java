@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record PaymentListResponse(
         Long id,
         String concertTitle,
+        String seatNumber,
         Double totalPrice,
         LocalDateTime createAt
 ) {
@@ -16,6 +17,7 @@ public record PaymentListResponse(
         return PaymentListResponse.builder()
                 .id(payment.getId())
                 .concertTitle(payment.getSeat().getConcert().getTitle())
+                .seatNumber(payment.getSeat().getSeatNumber())
                 .totalPrice(payment.getTotalPrice())
                 .createAt(payment.getCreatedAt())
                 .build();

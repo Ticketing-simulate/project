@@ -2,6 +2,7 @@ package org.example.ticketingdemo.domain.payment.service;
 
 import jakarta.validation.Valid;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
+import org.example.ticketingdemo.domain.payment.dto.response.PaymentCancelResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentFindResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
@@ -17,4 +18,5 @@ public interface PaymentService {
 
     PaymentFindResponse find(Long userId, Long paymentId);
 
+    PaymentCancelResponse delete(Long userId, Long paymentId);
 }
