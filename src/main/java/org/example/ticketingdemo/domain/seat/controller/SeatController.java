@@ -19,7 +19,6 @@ import java.util.List;
 public class SeatController {
 
     private final SeatInternalService seatInternalService;
-
     // 좌석 구매
     @PostMapping("/{concertId}/buy")
     public ResponseEntity<ApiResponse<SeatBuyResponse>> buySeat(
