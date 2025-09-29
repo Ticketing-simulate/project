@@ -2,7 +2,6 @@ package org.example.ticketingdemo.domain.seat.dto.response;
 
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
-
 import java.time.LocalDateTime;
 
 public record SeatCancelResponse(

@@ -43,8 +43,7 @@ public class SeatInternalService {
             throw new InvaildSeatException(SeatErrorCode.SEAT_ALREADY_PENDING);
         }
         // 좌석을 구매 대기 상태로 전환
-        seat.assignUser(user);
-        seat.changeStatus(SeatStatus.PENDING);
+        seat.markPending(user);
         return SeatBuyResponse.from(seat, SeatUserResponse.from(seat), SeatConcertResponse.from(seat));
     }
 
