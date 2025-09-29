@@ -10,7 +10,9 @@ public record PaymentFindResponse (
     Long id,
     String username,
     String concertTitle,
-    Long seatNumber,
+    String concertCategory,
+    String concertDescription,
+    String seatNumber,
     Double totalPrice,
     LocalDateTime createAt
 ) {
@@ -19,6 +21,9 @@ public record PaymentFindResponse (
                 .id(payment.getId())
                 .username(payment.getUser().getUserName())
                 .concertTitle(payment.getSeat().getConcert().getTitle())
+                .concertCategory(payment.getSeat().getConcert().getCategory())
+                .concertDescription(payment.getSeat().getConcert().getDescription())
+                .seatNumber(payment.getSeat().getSeatNumber())
                 .totalPrice(payment.getSeat().getConcert().getPrice())
                 .createAt(payment.getCreatedAt())
                 .build();
