@@ -4,8 +4,12 @@ import jakarta.transaction.Transactional;
 import org.example.ticketingdemo.domain.concert.dto.ConcertDTO;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
+import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.service.SeatExternalService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 

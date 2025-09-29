@@ -2,30 +2,34 @@ spring:
   application:
     name: ticketing-demo
   datasource:
-      url: jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres
-      username: ${DB_USERNAME}
-      password: ${DB_PASSWORD}
-      driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 60000
+      connection-timeout: 30000
 
   jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
       hibernate:
-        ddl-auto: update
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 supabase:
   url: https://mxttgcluoaselbfnympov.supabase.co
-  anon-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dHRnY2xvYXNlbGJmbnltcG92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NTM3MjksImV4cCI6MjA3NDQyOTcyOX0.sqlhIGUBa6ucm74DxbpNZ4j9QIqjqdDsPF7e1SbH8G4
+  anon-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...(생략)
   seat-table: seat
 
-
-  cache:
-    type: redis
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      timeout: 2000
+cache:
+  type: redis
+redis:
+  host: localhost
+  port: 6379
+  timeout: 2000
 
 jwt:
   secret:

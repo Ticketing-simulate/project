@@ -2,6 +2,7 @@ package org.example.ticketingdemo.domain.search.service;
 
 import com.fasterxml.jackson.databind.type.TypeModifier;
 import lombok.RequiredArgsConstructor;
+import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.concert.service.ConcertService;
 import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
 
@@ -68,7 +70,7 @@ public class PopularService {
         Set<String> resultRanks = redisTemplate.opsForZSet().reverseRange(Rank, 0, 4);
 
         Map<String, Long> ranks = new HashMap<>();
-        if(resultRanks != null || resultRanks.isEmpty()) {
+        if(resultRanks != null || !resultRanks.isEmpty()) {
             for(String rank : resultRanks) {
                 if(!rank.isEmpty()) {
                     ranks.put(rank ,parseLong(rank));
@@ -88,9 +90,11 @@ public class PopularService {
 //                .build();
 //    }
 
-    public Page<ConcertsSearchDto> serchConcert(int page, int size, String query) {
-          Pageable pageable = PageRequest.of(page -1, size);
-         return concertRepository.searchs(pageable, query);
+    //query를 콘서트 검색하기(title)
+    public Page<Concert> serchConcert(String query, int page, int size) {
+          Pageable pageable = PageRequest.of(page, size);
+          return concertRepository.findByTitle(query, pageable);
+
     }
 
 }
