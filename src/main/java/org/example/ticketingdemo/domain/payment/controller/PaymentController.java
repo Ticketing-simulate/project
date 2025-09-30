@@ -13,6 +13,7 @@ import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.service.PaymentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class PaymentController {
     @GetMapping("/payments")
     public ResponseEntity<ApiPageResponse<PaymentListResponse>> findAllPayments(
             @AuthenticationPrincipal User principal,
-            @PageableDefault Pageable pageable
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Long userId = Long.parseLong(principal.getUsername());
         Page<PaymentListResponse> payments = paymentService.findAll(userId, pageable);
