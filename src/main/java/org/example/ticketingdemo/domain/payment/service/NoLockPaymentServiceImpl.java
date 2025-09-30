@@ -18,6 +18,7 @@ import org.example.ticketingdemo.domain.seat.exception.SeatErrorCode;
 import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.math.BigDecimal;
 
 @Slf4j
 @Service
+@Primary    // 이 클래스의 빈을 기본으로 사용
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoLockPaymentServiceImpl implements PaymentService{
