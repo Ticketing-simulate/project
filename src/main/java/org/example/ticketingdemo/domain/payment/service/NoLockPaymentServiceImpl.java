@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PaymentServiceImpl implements PaymentService{
+public class NoLockPaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
