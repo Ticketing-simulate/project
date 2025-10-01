@@ -66,17 +66,17 @@ public class PopularContoller {
     query를 통해서 검색을 합니다 콘서트관련된것
     콘서트 title로 해서 query로 검색하는 것입니다 Concert테이블 title
      */
-//     @GetMapping("/search/concert")
-//     public ResponseEntity<Page<Concert>> getConcerts(
-//             @RequestParam String query,
-//            @RequestParam(required = false) int page,
-//            @RequestParam(required = false) int size
-//     ) {
-//         if(ObjectUtils.isEmpty(query)) {
-//            throw new IllegalArgumentException("query is empty");
-//         }
-//
-//         return ResponseEntity.ok(popularService.searchConcert(query, page, size));
-//     }
+    @GetMapping("/search/concert")
+    public ResponseEntity<Page<Concert>> getConcerts(
+            @RequestParam String query,
+            @RequestParam(required = false) int page,
+            @RequestParam(required = false) int size
+    ) {
+        if (ObjectUtils.isEmpty(query)) {
+            throw new IllegalArgumentException("query is empty");
+        }
+
+        return ResponseEntity.ok(popularService.searchConcert(query, page, size));
+    }
 
 }

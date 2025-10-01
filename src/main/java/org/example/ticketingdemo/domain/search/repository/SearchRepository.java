@@ -10,8 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface SearchRepository extends JpaRepository<Popular, Long> {
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Popular p WHERE p.id = :id")
     Optional<Popular> findByIdForUpdate(@Param("id") long id);
 

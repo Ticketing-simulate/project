@@ -4,12 +4,8 @@ import jakarta.transaction.Transactional;
 import org.example.ticketingdemo.domain.concert.dto.ConcertDTO;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
-import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.service.SeatExternalService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 
@@ -19,8 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class ConcertServiceImpl implements ConcertService {
-
+public class ConcertServiceImpl implements ConcertService{
     // 의존성 주입
     private final ConcertRepository concertRepository;
     private final SeatExternalService seatExternalService;
@@ -59,6 +54,7 @@ public class ConcertServiceImpl implements ConcertService {
                         // i -> Seat.create(...)는 람다식: 각각의 숫자 i를 받아서 Seat.create() 메서드를 호출하라'는 뜻
                         savedConcert,
                         // 이 좌석이 속한 콘서트 엔티티 지정 (DB에 저장된 콘서트 엔티티를 가리키는 변수)
+                        SeatStatus.AVAILABLE,
                         // 좌석 상태를 '사용 가능'으로 설정
                         "S-" + i //  "S-1", "S-2"와 같은 고유한 좌석 이름을 붙임
                 ))
