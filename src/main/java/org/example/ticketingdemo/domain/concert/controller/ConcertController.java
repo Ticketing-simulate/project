@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/concerts")
+@RequestMapping("/concert")
 public class ConcertController {
     private final ConcertService concertService;
 

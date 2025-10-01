@@ -1,16 +1,9 @@
 package org.example.ticketingdemo.domain.search.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.ticketingdemo.common.util.ErrorCodeEnum;
-import org.example.ticketingdemo.domain.concert.entity.Concert;
-import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
-import org.example.ticketingdemo.domain.search.dto.SearchResponseDto;
 import org.example.ticketingdemo.domain.search.entity.Popular;
 import org.example.ticketingdemo.domain.search.service.PopularService;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

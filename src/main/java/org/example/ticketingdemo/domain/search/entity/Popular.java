@@ -17,7 +17,7 @@ public class Popular {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    //@Id * 테스트를 위해 주석처리..
+    //@Id
     private Long concertId;
 
     /*

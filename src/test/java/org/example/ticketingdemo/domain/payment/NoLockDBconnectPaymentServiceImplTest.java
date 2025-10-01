@@ -2,9 +2,9 @@ package org.example.ticketingdemo.domain.payment;
 
 import org.example.ticketingdemo.common.exception.GlobalException;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
+import org.example.ticketingdemo.domain.concert.enums.Category;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
-import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
 import org.example.ticketingdemo.domain.payment.service.NoLockPaymentServiceImpl;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
@@ -13,10 +13,6 @@ import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -25,14 +21,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+
 // Spring Boot 통합 테스트
 @SpringBootTest
 @ImportAutoConfiguration(exclude = { SecurityAutoConfiguration.class })
@@ -69,7 +63,7 @@ public class NoLockDBconnectPaymentServiceImplTest {
         // Concert 객체 생성
         Concert concert = new Concert();
         concert.setTitle("testTitle");
-        concert.setCategory("hip-hop");
+        concert.setCategory(Category.HIP_HOP);
         concert.setPrice(25000.0);
         concert.setSeat(3);
         concert.setCreatedAt(LocalDateTime.now());

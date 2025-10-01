@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.Duration;
@@ -54,9 +53,9 @@ class SeatInternalServiceConcurrencyTest {
     @BeforeEach
     void setUp() {
         // DB 초기화하지 않고 Supabase의 기존 데이터 그대로 사용
-        Page<Concert> concertsPage = concertRepository.findByTitle("테스트 콘서트", PageRequest.of(0, 1));
-        concert = concertsPage.getContent().stream().findFirst()
-                .orElseThrow(() -> new RuntimeException("테스트 콘서트가 존재하지 않음"));
+        concert = concertRepository.findAll(PageRequest.of(0, 1))
+                .getContent().stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("콘서트 데이터가 존재하지 않음"));
 
         seat = seatRepository.findByConcertIdAndSeatNumber(concert.getConcertId(), "A1")
                 .orElseThrow(() -> new RuntimeException("좌석 A1이 존재하지 않음"));

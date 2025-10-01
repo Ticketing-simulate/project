@@ -3,6 +3,7 @@ package org.example.ticketingdemo.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.ticketingdemo.common.dto.response.ApiResponse;
+import org.example.ticketingdemo.common.util.ErrorCodeEnum;
 import org.example.ticketingdemo.domain.user.dto.request.LoginRequestDto;
 import org.example.ticketingdemo.domain.user.service.UserService;
 import org.example.ticketingdemo.domain.user.util.UserConst;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.example.ticketingdemo.common.enums.ResponseMessage;
 
 
 
@@ -35,10 +37,9 @@ public class LoginController {
      */
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequestDto dto)
-    {   // 서비스에서 로그인 처리 및 JWT 발급
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequestDto dto) {
         String token = userService.handleLogin(dto);
-        return ResponseEntity.ok(new ApiResponse<>(UserConst.LOGIN_SUCCESS, token));
+        return ApiResponse.ok(ResponseMessage.LOGIN_SUCCESS, token);
     }
 
     /**
@@ -47,9 +48,8 @@ public class LoginController {
      */
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout() {
-        return ResponseEntity.ok(new ApiResponse<>(UserConst.LOGOUT_SUCCESS, null));
+    public ResponseEntity<ApiResponse<Void>> logout() {
+        return ApiResponse.okMessage(ResponseMessage.LOGOUT_SUCCESS);
     }
 }
-
 

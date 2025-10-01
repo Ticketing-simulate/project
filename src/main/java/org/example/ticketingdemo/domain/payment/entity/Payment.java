@@ -11,22 +11,19 @@ import org.example.ticketingdemo.domain.user.entity.User;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "payments")
+@Table(name = "payment")
 public class Payment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "UserId", nullable = false)
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seat_id", nullable = false)
+    @JoinColumn(name = "SeatId", nullable = false)
     private Seat seat;
-
-//    @Column(nullable = false)   // 나중에 간편결제 기능 추가할거 대비해서 일단 주석처리
-//    private String paymentMethod;
 
     @Column(nullable = false)
     private Double totalPrice;

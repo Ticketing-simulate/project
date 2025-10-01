@@ -2,6 +2,7 @@ package org.example.ticketingdemo.domain.payment;
 
 import org.example.ticketingdemo.common.exception.GlobalException;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
+import org.example.ticketingdemo.domain.concert.enums.Category;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
@@ -61,7 +62,7 @@ public class PessimisticLockDBconnectPaymentServiceImplTest {
         // Concert 객체 생성
         Concert concert = new Concert();
         concert.setTitle("testTitle");
-        concert.setCategory("hip-hop");
+        concert.setCategory(Category.HIP_HOP);
         concert.setPrice(25000.0);
         concert.setSeat(3);
         concert.setCreatedAt(LocalDateTime.now());

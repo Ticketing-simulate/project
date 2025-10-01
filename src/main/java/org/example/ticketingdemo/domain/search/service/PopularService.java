@@ -1,34 +1,18 @@
 package org.example.ticketingdemo.domain.search.service;
 
-import com.fasterxml.jackson.databind.type.TypeModifier;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
-import org.example.ticketingdemo.domain.concert.service.ConcertService;
-import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
-import org.example.ticketingdemo.domain.search.dto.SearchResponseDto;
 import org.example.ticketingdemo.domain.search.entity.Popular;
 import org.example.ticketingdemo.domain.search.repository.SearchRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.print.DocFlavor;
+
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.lang.Long.parseLong;
 
 @Service
 @RequiredArgsConstructor
