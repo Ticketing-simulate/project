@@ -26,12 +26,12 @@ supabase:
   seat-table: seat
 
 
-  cache:
-      type: redis
+cache:
+  type: redis
   redis:
-     host: localhost
-     port: 6379
-     timeout: 2000
+    host: localhost
+    port: 6379
+    timeout: 2000
 
 jwt:
   secret:
