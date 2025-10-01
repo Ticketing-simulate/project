@@ -1,11 +1,17 @@
 package org.example.ticketingdemo.domain.search.service;
 
 
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.search.entity.Popular;
 import org.example.ticketingdemo.domain.search.repository.SearchRepository;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -81,8 +87,7 @@ public class PopularService {
             }
         }
         return ranks;
-
-
+    }
         //콘서트 검색하기
 //    public SearchResponseDto getSearchs(String query) {
 //
@@ -94,11 +99,11 @@ public class PopularService {
 //    }
 
         //query를 콘서트 검색하기(title)
-//        @Cacheable(value = "searchConcert", key={"#query", "#page", "#size"}, condition = "#page>0")
-//        public Page<Concert> searchConcert(String query, int page, int size) {
-//            Pageable pageable = PageRequest.of(page, size);
-//            return concertRepository.findByTitle(query, pageable);
-//        }
 
-    }
+        @Cacheable(value = "searchConcert", key="#query", condition = "#page>0")
+        public Page<Concert> searchConcert(String query, int page, int size) {
+            Pageable pageable = PageRequest.of(page, size);
+            return concertRepository.findByTitle(query, pageable);
+        }
+
 }
