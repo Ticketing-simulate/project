@@ -2,6 +2,7 @@ package org.example.ticketingdemo.domain.payment.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.ticketingdemo.common.exception.GlobalException;
 import org.example.ticketingdemo.common.util.ErrorCodeEnum;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
@@ -15,7 +16,6 @@ import org.example.ticketingdemo.domain.seat.entity.Seat;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.exception.SeatErrorCode;
 import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
-import org.example.ticketingdemo.domain.seat.service.SeatExternalService;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -25,15 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PaymentServiceImpl implements PaymentService{
+public class PessimisticLockPaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final SeatRepository seatRepository;
-    private final SeatExternalService ticketExternalService;
 
     @Override
     @Transactional
@@ -43,8 +43,8 @@ public class PaymentServiceImpl implements PaymentService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.USER_NOT_FOUND));
 
-        // 좌석 조회
-        Seat seat = seatRepository.findByConcertIdAndSeatNumber(request.concertId(), request.seatNumber())
+        // 비관적 락 좌석 조회
+        Seat seat = seatRepository.findByConcertIdAndSeatNumberWithLock(request.concertId(), request.seatNumber())
                 .orElseThrow(() -> new GlobalException(ErrorCodeEnum.SEAT_NOT_FOUND));
 
         // 좌석이 요청한 사용자에게 할당된 좌석인지 확인
@@ -77,6 +77,7 @@ public class PaymentServiceImpl implements PaymentService{
 
         // 3. 좌석 상태를 SOLD로 변경
         seat.changeStatus(SeatStatus.SOLD);
+        log.info("[PaymentCreate] 결제 완료. seatId={} paymentId={}", seat.getId(), payment.getId());
         return PaymentCreateResponse.fromPayment(payment);
     }
 

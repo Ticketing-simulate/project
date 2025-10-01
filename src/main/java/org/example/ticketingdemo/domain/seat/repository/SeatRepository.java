@@ -1,10 +1,13 @@
 package org.example.ticketingdemo.domain.seat.repository;
 
+import jakarta.persistence.LockModeType;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +25,14 @@ public interface SeatRepository extends JpaRepository<Seat,Long> {
             "LEFT JOIN FETCH s.user u " +
             "WHERE c.concertId = :concertId AND s.status = :status")
     List<Seat> findAllByConcertIdAndStatus(Long concertId, SeatStatus status);
+
+    List<Seat> findAllByStatusAndPendingExpiresAtBefore(SeatStatus status, LocalDateTime pendingExpiresAtBefore);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM Seat s " +
+            "JOIN FETCH s.concert c " +
+            "LEFT JOIN FETCH s.user u " +
+            "WHERE c.concertId = :concertId AND s.seatNumber = :seatNumber")
+    Optional<Seat> findByConcertIdAndSeatNumberWithLock(Long concertId, String seatNumber);
+
 }

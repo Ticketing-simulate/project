@@ -17,7 +17,6 @@ public class SeatExternalService  {
     public Seat createSeat(Seat seat) {
         return seatRepository.save(seat);
     }
-
     @Transactional
     public Seat getSeatById(Long seatId) {
         return seatRepository.findById(seatId).orElseThrow(()-> new InvaildSeatException(SeatErrorCode.SEAT_NOT_FOUND_SEAT));
