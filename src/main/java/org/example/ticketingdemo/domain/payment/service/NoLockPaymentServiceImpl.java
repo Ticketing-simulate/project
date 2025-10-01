@@ -28,7 +28,7 @@ import java.math.BigDecimal;
 
 @Slf4j
 @Service
-@Primary    // 이 클래스의 빈을 기본으로 사용
+@Primary
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoLockPaymentServiceImpl implements PaymentService{

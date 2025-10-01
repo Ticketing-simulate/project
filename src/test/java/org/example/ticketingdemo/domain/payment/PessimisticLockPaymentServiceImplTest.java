@@ -5,7 +5,7 @@ import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
 import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
-import org.example.ticketingdemo.domain.payment.service.PessimisticLockPaymentImplService;
+import org.example.ticketingdemo.domain.payment.service.PessimisticLockPaymentServiceImpl;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class PessimisticLockPaymentServiceImplTest {
 
     @InjectMocks
-    private PessimisticLockPaymentImplService pessimisticLockPaymentImplService;
+    private PessimisticLockPaymentServiceImpl pessimisticLockPaymentServiceImpl;
     @Mock
     private PaymentRepository paymentRepository;
     @Mock
@@ -94,7 +94,7 @@ public class PessimisticLockPaymentServiceImplTest {
         when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
 
         int testCount = 100;
-        ExecutorService executorServie = Executors.newFixedThreadPool(30); // 경쟁 정도
+        ExecutorService executorServie = Executors.newFixedThreadPool(30); // 동시에 접근하는 스레드 수
         CountDownLatch latch = new CountDownLatch(testCount);
 
         // 결과 카운트용
@@ -105,7 +105,7 @@ public class PessimisticLockPaymentServiceImplTest {
             executorServie.submit(() -> {
                 try {
                     // 동시 호출
-                    pessimisticLockPaymentImplService.createPayment(user.getId(), request);
+                    pessimisticLockPaymentServiceImpl.createPayment(user.getId(), request);
                     successCount.incrementAndGet();
                 } catch (GlobalException e) {
                     failCount.incrementAndGet();
