@@ -2,86 +2,86 @@ package org.example.ticketingdemo.domain.payment;
 
 import org.example.ticketingdemo.common.exception.GlobalException;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
+import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
-import org.example.ticketingdemo.domain.payment.entity.Payment;
 import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
-import org.example.ticketingdemo.domain.payment.service.NoLockPaymentServiceImpl;
+import org.example.ticketingdemo.domain.payment.service.PessimisticLockPaymentServiceImpl;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+// Spring Boot 통합 테스트
+@SpringBootTest
+@ImportAutoConfiguration(exclude = { SecurityAutoConfiguration.class })
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres",
+        "spring.datasource.username=postgres.mxttgcloaselbfnympov",
+        "spring.datasource.password=1Y4GJn1vIDkN1YJF",
+        "jwt.secret.key=xt/S0ffqB5ldIkAWtJrB1PfcuBf17La0xPNN/l6oWIQXSOYHeOxMYXMgJEq+vlIytCnImotMBDKyHThFL8jVQg"
+})
+public class PessimisticLockDBconnectPaymentServiceImplTest {
 
-@ExtendWith(MockitoExtension.class)
-public class NoLockPaymentServiceImplTest {
-
-    @InjectMocks
-    private NoLockPaymentServiceImpl noLockPaymentServiceImpl;
-    @Mock
+    @Autowired
+    private PessimisticLockPaymentServiceImpl pessimisticLockPaymentServiceImpl;
+    @Autowired
     private PaymentRepository paymentRepository;
-    @Mock
+    @Autowired
     private SeatRepository seatRepository;
-    @Mock
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ConcertRepository concertRepository;
 
     @Test
-    public void 결제_동시성_테스트() throws InterruptedException {
+    public void 결제_동시성_테스트_DB연동() throws InterruptedException {
+
+        String uniqueEmail = "test_" + System.currentTimeMillis() + "@test.com";
+        String userName = "testName_" + System.currentTimeMillis();
 
         // User 객체 생성
-        User user = new User();
-        ReflectionTestUtils.setField(user, "id", 20L);
+        User user = new User(userName, uniqueEmail,"test1234!");
+        user = userRepository.save(user);
+        final User finalUser = user;
 
         // Concert 객체 생성
         Concert concert = new Concert();
-        ReflectionTestUtils.setField(concert, "concertId", 10L);
-        ReflectionTestUtils.setField(concert, "price", 25000.0);
+        concert.setTitle("testTitle");
+        concert.setCategory("hip-hop");
+        concert.setPrice(25000.0);
+        concert.setSeat(3);
+        concert.setCreatedAt(LocalDateTime.now());
+        concert.setModifiedAt(LocalDateTime.now());
+        concert.setTicket(1);
+        concert = concertRepository.save(concert);
 
         // Seat 객체 생성
         Seat seat = new Seat();
-        ReflectionTestUtils.setField(seat, "id", 1L);
-        ReflectionTestUtils.setField(seat, "seatNumber", "S-15");
+        ReflectionTestUtils.setField(seat, "seatNumber", "S-3");
         ReflectionTestUtils.setField(seat, "status", SeatStatus.PENDING);
         ReflectionTestUtils.setField(seat, "concert", concert);
         ReflectionTestUtils.setField(seat, "user", user);
+        seat = seatRepository.save(seat);
 
         PaymentCreateRequest request = new PaymentCreateRequest(
-                10L,
-                "S-15",
-                25000.0
+                concert.getConcertId(),
+                seat.getSeatNumber(),
+                concert.getPrice()
         );
-
-        Payment payment = Payment.builder()
-                .user(user)
-                .seat(seat)
-                .totalPrice(25000.0)
-                .build();
-
-        ReflectionTestUtils.setField(payment, "id", 5L); //paymentId=5라고 가정
-
-        // UserRepository: user 반환
-        when(userRepository.findById(20L)).thenReturn(Optional.of(user));
-
-        // SeatRepository: seat 반환 (동일한 seat 객체를 모든 스레드가 공유)
-        when(seatRepository.findByConcertIdAndSeatNumber(10L, "S-15"))
-                .thenReturn(Optional.of(seat));
-
-        // PaymentRepository: save 시 payment Mock 객체 반환
-        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
 
         int testCount = 100;
         ExecutorService executorServie = Executors.newFixedThreadPool(30); // 동시에 접근하는 스레드 수
@@ -95,9 +95,12 @@ public class NoLockPaymentServiceImplTest {
             executorServie.submit(() -> {
                 try {
                     // 동시 호출
-                    noLockPaymentServiceImpl.createPayment(user.getId(), request);
+                    pessimisticLockPaymentServiceImpl.createPayment(finalUser.getId(), request);
                     successCount.incrementAndGet();
                 } catch (GlobalException e) {
+                    failCount.incrementAndGet();
+                } catch (Exception e){
+                    // 예상치 못한 예외도 포 
                     failCount.incrementAndGet();
                 } finally {
                     latch.countDown();
