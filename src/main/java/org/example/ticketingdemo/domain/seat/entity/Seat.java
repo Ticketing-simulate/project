@@ -63,7 +63,7 @@ public class Seat extends BaseEntity {
         this.status = SeatStatus.AVAILABLE;
     }
 
-    public static Seat create(Concert concert, String seatNumber) {
+    public static Seat create(Concert concert, SeatStatus available, String seatNumber) {
         return new Seat(concert, seatNumber);
     }
 
