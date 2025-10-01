@@ -2,6 +2,7 @@ package org.example.ticketingdemo.domain.concert.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.ticketingdemo.domain.concert.enums.Category;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 
 import java.time.LocalDateTime;
@@ -24,8 +25,9 @@ public class Concert {
     @Column(nullable = false, length = 100)
     private String title;   // 콘서트 제목
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String category; // 콘서트 장르
+    private Category category;// 콘서트 장르
 
     @Column(columnDefinition = "TEXT")
     private String description; // 콘서트 설명
@@ -52,4 +54,6 @@ public class Concert {
     @Column(nullable = false)
     private Integer ticket;
 
+    public Concert(String 테스트_콘서트, String 뮤지컬) {
+    }
 }

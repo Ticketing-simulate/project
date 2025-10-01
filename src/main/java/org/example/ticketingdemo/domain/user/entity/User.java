@@ -38,6 +38,10 @@ public class User extends BaseEntity {
         this.role = "ADMIN";
     }
 
+    public User(String s, String s1) {
+        super();
+    }
+
     // 사용자 정보 업데이트
     public void update(String userName, String email, String password) {
         this.userName = userName;

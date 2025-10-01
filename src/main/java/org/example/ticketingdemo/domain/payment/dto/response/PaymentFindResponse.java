@@ -21,7 +21,7 @@ public record PaymentFindResponse (
                 .id(payment.getId())
                 .username(payment.getUser().getUserName())
                 .concertTitle(payment.getSeat().getConcert().getTitle())
-                .concertCategory(payment.getSeat().getConcert().getCategory())
+                .concertCategory(payment.getSeat().getConcert().getCategory().name())
                 .concertDescription(payment.getSeat().getConcert().getDescription())
                 .seatNumber(payment.getSeat().getSeatNumber())
                 .totalPrice(payment.getSeat().getConcert().getPrice())

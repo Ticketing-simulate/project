@@ -3,6 +3,7 @@ package org.example.ticketingdemo.domain.concert.service;
 import jakarta.transaction.Transactional;
 import org.example.ticketingdemo.domain.concert.dto.ConcertDTO;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
+import org.example.ticketingdemo.domain.concert.enums.Category;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.search.dto.ConcertsSearchDto;
 import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
@@ -35,10 +36,12 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     @Transactional
     public ConcertDTO createConcert(ConcertDTO concertDTO) {
-        // 1. DTO -> Entity 변환 (빌더 패턴 사용)
+        // 1. String -> Enum 변환
+        Category category = parseCategory(concertDTO.getCategory());
+
         Concert concert = Concert.builder()
                 .title(concertDTO.getTitle())
-                .category(concertDTO.getCategory())
+                .category(category)
                 .description(concertDTO.getDescription())
                 .price(concertDTO.getPrice())
                 .seat(concertDTO.getSeatCount())
@@ -98,7 +101,7 @@ public class ConcertServiceImpl implements ConcertService {
 
         // DTO의 정보로 엔티티의 필드를 업데이트
         concert.setTitle(concertDTO.getTitle());
-        concert.setCategory(concertDTO.getCategory());
+        concert.setCategory(parseCategory(concertDTO.getCategory()));
         concert.setDescription(concertDTO.getDescription());
         concert.setPrice(concertDTO.getPrice());
         concert.setModifiedAt(LocalDateTime.now());
@@ -120,16 +123,33 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
 
-    // Entity -> DTO 변환을 위한 헬퍼 메서드
+    // ---------------- Helper Methods ----------------
+
+    // Entity -> DTO 변환
     private ConcertDTO toDTO(Concert entity) {
         ConcertDTO dto = new ConcertDTO();
         dto.setConcertId(entity.getConcertId());
         dto.setTitle(entity.getTitle());
-        dto.setCategory(entity.getCategory());
+        dto.setCategory(entity.getCategory().name());
         dto.setDescription(entity.getDescription());
         dto.setPrice(entity.getPrice());
         dto.setSeatCount(entity.getSeat());
         dto.setTicketCount(entity.getTicket());
         return dto;
+    }
+
+    // String -> Category enum 변환
+    private Category parseCategory(String categoryStr) {
+        try {
+            return Category.valueOf(categoryStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("알 수 없는 카테고리입니다: " + categoryStr);
+        }
+    }
+
+    // 콘서트 조회 헬퍼
+    private Concert findConcertById(Long id) {
+        return concertRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 콘서트를 찾을 수 없습니다. id=" + id));
     }
 }
