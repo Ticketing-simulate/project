@@ -97,8 +97,7 @@ public class PopularService {
             }
         }
         return ranks;
-
-
+    }
         //콘서트 검색하기
 //    public SearchResponseDto getSearchs(String query) {
 //
@@ -111,10 +110,9 @@ public class PopularService {
 
         //query를 콘서트 검색하기(title)
 //        @Cacheable(value = "searchConcert", key={"#query", "#page", "#size"}, condition = "#page>0")
-//        public Page<Concert> searchConcert(String query, int page, int size) {
-//            Pageable pageable = PageRequest.of(page, size);
-//            return concertRepository.findByTitle(query, pageable);
-//        }
+        public Page<Concert> searchConcert(String query, int page, int size) {
+            Pageable pageable = PageRequest.of(page, size);
+            return concertRepository.findByTitle(query, pageable);
+        }
 
-    }
 }
