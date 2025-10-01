@@ -1,6 +1,5 @@
 package org.example.ticketingdemo;
 
-
 import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
 import org.example.ticketingdemo.domain.seat.dto.request.SeatBuyRequest;
@@ -10,15 +9,14 @@ import org.example.ticketingdemo.domain.seat.repository.SeatRepository;
 import org.example.ticketingdemo.domain.seat.service.SeatInternalService;
 import org.example.ticketingdemo.domain.user.entity.User;
 import org.example.ticketingdemo.domain.user.repository.UserRepository;
-import org.example.ticketingdemo.domain.payment.repository.PaymentRepository;
 import org.example.ticketingdemo.lock.LockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,25 +40,23 @@ class SeatInternalServiceConcurrencyTest {
     @Autowired
     private LockService lockService;
 
-    @Autowired
-    private PaymentRepository paymentRepository;
-
-
     private Concert concert;
     private Seat seat;
     private List<User> users;
 
     @BeforeEach
     void setUp() {
-        // DB 초기화하지 않고 Supabase의 기존 데이터 그대로 사용
-        concert = concertRepository.findAll(PageRequest.of(0, 1))
-                .getContent().stream().findFirst()
-                .orElseThrow(() -> new RuntimeException("콘서트 데이터가 존재하지 않음"));
+        concertRepository.deleteAll();
+        userRepository.deleteAll();
+        seatRepository.deleteAll();
 
-        seat = seatRepository.findByConcertIdAndSeatNumber(concert.getConcertId(), "A1")
-                .orElseThrow(() -> new RuntimeException("좌석 A1이 존재하지 않음"));
+        concert = concertRepository.save(new Concert("테스트 콘서트", "뮤지컬"));
+        seat = seatRepository.save(Seat.create(concert, "A1"));
 
-        users = userRepository.findAll(); // 이미 있는 유저 목록 가져오기
+        users = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            users.add(userRepository.save(new User("user" + i, "user" + i + "@test.com")));
+        }
     }
 
     @Test

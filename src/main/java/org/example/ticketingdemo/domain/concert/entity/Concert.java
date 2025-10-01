@@ -3,6 +3,7 @@ package org.example.ticketingdemo.domain.concert.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.ticketingdemo.domain.concert.enums.Category;
+import org.example.ticketingdemo.domain.concert.enums.CategoryConverter;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class Concert {
     @Column(nullable = false, length = 100)
     private String title;   // 콘서트 제목
 
+    @Convert(converter = CategoryConverter.class)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private Category category;// 콘서트 장르
