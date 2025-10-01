@@ -39,25 +39,10 @@ public class PopularService {
     //readisTemplate는 주로 opsFor... 사용함
     //redisTemplate만들기 위해 주입이 필요함
     private final RedisTemplate<String, String> redisTemplate;
-    //private final ConcertService concertService;
     private final ConcertRepository concertRepository;
 
     //rank설정
     private static String Rank = "concert:rank";
-
-    /*
-    로그 기록 남기기 : Popular 저장하기
-    이용객이 콘서트 티켓을 사서 얼마나 쌓았는지 저장합니다
-     */
-//    public Popular savaPopular(Popular popular) {
-//        Popular savedPopular = new Popular(
-//                popular.getId(),
-//                popular.getConcertId(),
-//                popular.getTicketcounts()
-//        );
-//
-//       return searchRepository.save(savedPopular);
-//    }
 
     @Transactional
     public void incrementTicketCountWithPessimisticLock(Long id) {
@@ -99,18 +84,8 @@ public class PopularService {
         return ranks;
     }
 
-        //콘서트 검색하기
-//    public SearchResponseDto getSearchs(String query) {
-//
-//        List<ConcertsSearchDto> concerts = concertService.ConcertSearch(query, 100);
-//
-//        return SearchResponseDto.builder()
-//                .concerts(concerts)
-//                .build();
-//    }
-
         //query를 콘서트 검색하기(title)
-//        @Cacheable(value = "searchConcert", key={"#query", "#page", "#size"}, condition = "#page>0")
+       @Cacheable(value = "searchConcert", key="#query", condition = "#page>0")
         public Page<Concert> searchConcert(String query, int page, int size) {
             Pageable pageable = PageRequest.of(page, size);
             return concertRepository.findByTitle(query, pageable);

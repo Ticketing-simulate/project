@@ -44,22 +44,6 @@ public class PopularContoller {
         return ResponseEntity.ok(RankResponse);
     }
 
-    /*
-    콘서트, 티켓 검색 (두개 주제 검색하기)
-    검색어는 치지않는 한, 콘서트하고 티켓이 같이 나옵니다
-     */
-//    @GetMapping("/search/concert")
-//    public ResponseEntity<SearchResponseDto> getConcerts(
-//            @RequestParam String query
-//    ) {
-//        if(query== null || query.isBlank()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        }
-//
-//        SearchResponseDto result = popularService.getSearchs(query);
-//        return ResponseEntity.ok(result);
-//    }
-
 
     /*
     페이징 처리
