@@ -29,7 +29,7 @@ public class ApiResponse<T> {
     public ApiResponse(String loginSuccess, String token) {
 
         this.success = true;
-        this.message = loginSuccess;             
+        this.message = loginSuccess;
         this.data = (T) token;
         this.timestamp = LocalDateTime.now();
 

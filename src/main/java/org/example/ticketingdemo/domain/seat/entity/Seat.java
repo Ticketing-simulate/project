@@ -23,11 +23,11 @@ public class Seat extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_id", nullable = false)
+    @JoinColumn(name = "concertId", nullable = false)
     private Concert concert;
 
     @Enumerated(EnumType.STRING)

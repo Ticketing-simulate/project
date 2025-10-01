@@ -6,10 +6,10 @@ import org.example.ticketingdemo.common.dto.response.ApiPageResponse;
 import org.example.ticketingdemo.common.dto.response.ApiResponse;
 import org.example.ticketingdemo.domain.payment.dto.request.PaymentCreateRequest;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentCancelResponse;
+import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentFindResponse;
 import org.example.ticketingdemo.domain.payment.dto.response.PaymentListResponse;
-import org.example.ticketingdemo.domain.payment.dto.response.PaymentCreateResponse;
-import org.example.ticketingdemo.domain.payment.entity.Payment;
+
 import org.example.ticketingdemo.domain.payment.service.PaymentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

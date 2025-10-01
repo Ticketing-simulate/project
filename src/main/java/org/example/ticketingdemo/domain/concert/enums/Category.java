@@ -1,24 +1,32 @@
 package org.example.ticketingdemo.domain.concert.enums;
 
-public enum Category {
-    // 음악 장르
-    POP,
-    ROCK,
-    HIP_HOP,
-    JAZZ,
-    CLASSICAL,
-    BALLAD,
-    INDIE,
-    ELECTRONIC,
-    TROT,
-    MUSICAL,
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    // 연극 장르
-    PLAY,
-    COMEDY,
-    TRAGEDY,
-    DRAMA,
-    MONOLOGUE,
-    PERFORMANCE;
+public enum Category {
+    POP, ROCK, HIP_HOP, JAZZ, CLASSICAL, BALLAD, INDIE, ELECTRONIC, TROT, MUSICAL, KPop,
+    K_Pop("K-Pop"), // DB 값 지정
+
+    PLAY, COMEDY, TRAGEDY, DRAMA, MONOLOGUE, PERFORMANCE;
+
+    private final String dbValue;
+
+    Category() {
+        this.dbValue = this.name();
+    }
+
+    Category(String dbValue) {
+        this.dbValue = dbValue;
+    }
+
+    public String getDbValue() {
+        return dbValue;
+    }
+
+    public static Category fromDbValue(String dbValue) {
+        for (Category c : values()) {
+            if (c.dbValue.equals(dbValue)) return c;
+        }
+        throw new IllegalArgumentException("Unknown Category: " + dbValue);
+    }
 }
 
