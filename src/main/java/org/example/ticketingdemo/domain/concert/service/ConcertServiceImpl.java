@@ -5,6 +5,7 @@ import org.example.ticketingdemo.domain.concert.dto.ConcertDTO;
 import org.example.ticketingdemo.domain.concert.entity.Concert;
 import org.example.ticketingdemo.domain.concert.enums.Category;
 import org.example.ticketingdemo.domain.concert.repository.ConcertRepository;
+import org.example.ticketingdemo.domain.seat.enums.SeatStatus;
 import org.example.ticketingdemo.domain.seat.service.SeatExternalService;
 import org.springframework.stereotype.Service;
 import org.example.ticketingdemo.domain.seat.entity.Seat;
@@ -57,7 +58,7 @@ public class ConcertServiceImpl implements ConcertService {
                         // i -> Seat.create(...)는 람다식: 각각의 숫자 i를 받아서 Seat.create() 메서드를 호출하라'는 뜻
                         savedConcert,
                         // 이 좌석이 속한 콘서트 엔티티 지정 (DB에 저장된 콘서트 엔티티를 가리키는 변수)
-                        // 좌석 상태를 '사용 가능'으로 설정
+                        SeatStatus.AVAILABLE,// 좌석 상태를 '사용 가능'으로 설정
                         "S-" + i //  "S-1", "S-2"와 같은 고유한 좌석 이름을 붙임
                 ))
                 .forEach(seatExternalService::createSeat);

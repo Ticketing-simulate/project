@@ -1,5 +1,7 @@
 package org.example.ticketingdemo.domain.user.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.example.ticketingdemo.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,6 +16,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
+@AllArgsConstructor
+@Builder
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

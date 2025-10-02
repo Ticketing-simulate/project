@@ -1,6 +1,8 @@
 package org.example.ticketingdemo.domain.seat.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.ticketingdemo.common.entity.BaseEntity;
@@ -16,6 +18,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "seat")
+@Builder
+@AllArgsConstructor
 public class Seat extends BaseEntity {
 
     @Id

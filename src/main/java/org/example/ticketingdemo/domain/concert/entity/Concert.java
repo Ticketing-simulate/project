@@ -56,6 +56,15 @@ public class Concert {
     @Column(nullable = false)
     private Integer ticket;
 
-    public Concert(String 테스트_콘서트, String 뮤지컬) {
+    // 테스트용 / 최소 생성자
+    public Concert(String title, Category category) {
+        this.title = title;
+        this.category = category;
+        this.description = "테스트 콘서트 설명";
+        this.price = 10000.0;           // 기본값
+        this.seat = 100;                // 기본값
+        this.ticket = 100;              // 기본값
+        this.createdAt = LocalDateTime.now();
+        this.modifiedAt = LocalDateTime.now();
     }
 }

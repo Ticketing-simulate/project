@@ -54,6 +54,9 @@ public class SeatInternalService {
         seat.assignUser(user);
         seat.changeStatus(SeatStatus.PENDING);
 
+        //DB에 즉시 반영 (트랜잭션 커밋 전에 flush)
+        seatRepository.saveAndFlush(seat);
+
         return SeatBuyResponse.from(seat, SeatUserResponse.from(seat), SeatConcertResponse.from(seat));
     }
 
@@ -75,7 +78,12 @@ public class SeatInternalService {
             throw new InvaildSeatException(SeatErrorCode.SEAT_ALREADY_PENDING);
         }
         // 좌석을 구매 대기 상태로 전환
-        seat.markPending(user);
+        seat.assignUser(user);
+        seat.changeStatus(SeatStatus.PENDING);
+
+        // DB에 즉시 반영
+        seatRepository.saveAndFlush(seat);
+
         return SeatBuyResponse.from(seat, SeatUserResponse.from(seat), SeatConcertResponse.from(seat));
     }
 
